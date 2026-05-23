@@ -1,0 +1,47 @@
+{
+  "name": "potarix-mcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.Potarix/potarix-mcp",
+  "description": "MCP server for Potarix Enricher company and email lookup tools.",
+  "type": "module",
+  "bin": {
+    "potarix-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "server.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "smoke": "node scripts/smoke.mjs",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Potarix/potarix-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "potarix",
+    "enrichment",
+    "sales",
+    "revops",
+    "email-finder"
+  ],
+  "author": "Potarix",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "typescript": "^5.9.3"
+  }
+}
