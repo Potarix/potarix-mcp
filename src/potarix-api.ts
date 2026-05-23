@@ -78,6 +78,29 @@ export async function postPotarix(path: string, body: RequestBody): Promise<Json
   return payload;
 }
 
+export async function getPotarix(path: string): Promise<JsonValue> {
+  const response = await fetch(`${apiBase()}${path}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Authorization": `Bearer ${apiKey()}`
+    }
+  });
+
+  const text = await response.text();
+  const payload = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw new PotarixApiError(
+      `Potarix API returned HTTP ${response.status}: ${stringifyDetail(payload)}`,
+      response.status,
+      payload
+    );
+  }
+
+  return payload;
+}
+
 export function asJsonText(value: JsonValue): string {
   return JSON.stringify(value, null, 2);
 }

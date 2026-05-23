@@ -1,18 +1,24 @@
 # Potarix MCP Server
 
-Tiny MCP wrapper for Potarix Enricher. It lets AI agents find company websites and verified business emails from the same places they already discover tools.
+MCP wrapper for Potarix Enricher. Lets AI agents resolve company websites, find verified emails, and pull complete company rosters — and (with one human-in-the-loop card capture) sign up and pay for credits entirely from the agent.
 
 <!-- mcp-name: io.github.Potarix/potarix-mcp -->
 
 ## Tools
 
-- `lookup_company_website` - company name to website URL
-- `find_person_email` - named person plus company or domain to verified email
-- `find_decision_maker_email` - category plus domain to likely buyer email
-- `find_linkedin_email` - LinkedIn profile URL to verified email
-- `find_company_emails` - domain to public company contacts
+| tool | what it does | cost |
+|---|---|---|
+| `lookup_company_website` | company name → website URL | 2 credits |
+| `find_person_email` | named person + company/domain → verified email | 25 credits |
+| `find_decision_maker_email` | category + domain → likely buyer name + email | 25 credits |
+| `find_linkedin_email` | LinkedIn profile URL → verified email | 10 credits |
+| `find_company_emails` | domain → public company contact roster | 25 credits |
+| `find_all` | one company name → website + DMs + full company email list | sum of above |
+| `check_balance` | credits, email, saved-card status, key count | free |
+| `start_checkout` | get a Stripe URL to add a card the first time | n/a |
+| `topup_credits` | charge the saved card and add credits | n/a |
 
-These tools call the Potarix Enricher API and use account credits.
+1 credit = $0.01. Trial accounts start with 25 free credits. Every endpoint floors at the worst-case provider COGS — a hit never loses money, and short-circuited waterfall calls earn margin.
 
 ## Install
 
