@@ -1,6 +1,6 @@
 {
   "name": "potarix-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "mcpName": "io.github.Potarix/potarix-mcp",
   "description": "MCP server for Potarix Enricher company and email lookup tools.",
   "type": "module",
@@ -40,6 +40,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.7.2",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.1.13"
   },
