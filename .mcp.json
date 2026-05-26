@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "potarix-enricher": {
+      "url": "https://api.potarix.com/mcp"
+    }
+  }
+}
