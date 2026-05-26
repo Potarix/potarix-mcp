@@ -120,12 +120,23 @@ Environment variables:
 
 ## Registry Publishing
 
-This repo includes `server.json` for the official MCP Registry.
+This repo includes `server.json` for the official MCP Registry. The entry is
+multi-surface: it declares **both** the hosted Streamable HTTP remote
+(`https://api.potarix.com/mcp`) and the npm stdio package (`potarix-mcp`), so a
+single registry record advertises two ways to connect.
 
-Publishing steps:
+The registry validates the npm package by fetching it and checking that its
+published `mcpName` matches the server `name`, so the npm package must be
+published **first**, at the same version named in `server.json` (`packages[].version`).
+
+Publishing steps (version-bump first, then npm, then registry):
 
 ```bash
+# 1. Bump package.json + server.json to the same new version (e.g. 0.1.3).
+#    server.json must be a NEW version each publish (versions are immutable).
+# 2. Build + publish the npm artifact (carries mcpName for ownership proof):
 npm publish
+# 3. Push the multi-surface server.json to the official MCP Registry:
 mcp-publisher login github
 mcp-publisher publish
 ```

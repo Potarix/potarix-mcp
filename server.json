@@ -3,7 +3,7 @@
   "name": "io.github.Potarix/potarix-mcp",
   "title": "Potarix Enricher",
   "description": "Find company websites and verified business emails through the Potarix Enricher API.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "url": "https://github.com/Potarix/potarix-mcp",
     "source": "github"
@@ -12,6 +12,34 @@
     {
       "type": "streamable-http",
       "url": "https://api.potarix.com/mcp"
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "potarix-mcp",
+      "version": "0.1.3",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "POTARIX_API_KEY",
+          "description": "Potarix Enricher API key.",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "POTARIX_API",
+          "description": "Optional Potarix API base URL override.",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "string",
+          "default": "https://api.potarix.com/enricher"
+        }
+      ]
     }
   ]
 }
