@@ -35,9 +35,25 @@ function bearerFromHeaders(req: IncomingMessage): string | undefined {
 
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
   const payload = JSON.stringify(body);
-  res.writeHead(status, { "Content-Type": "application/json" });
+  res.writeHead(status, { "Content-Type": "application/json", ...SECURITY_HEADERS });
   res.end(payload);
 }
+
+// This endpoint serves JSON-RPC, never HTML. Lock it so no browser can render
+// the response as a document or frame it. The MCP App *view* CSP is declared
+// separately on the ui:// resource via _meta.ui.csp (see src/ui.ts); the host
+// enforces that on the sandboxed iframe. These headers are defense-in-depth
+// for the transport surface.
+const SECURITY_HEADERS: Record<string, string> = {
+  "Content-Security-Policy":
+    "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "no-referrer",
+  "Cross-Origin-Resource-Policy": "same-origin",
+  // nginx terminates TLS in front of this loopback service; HSTS is safe to assert.
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+};
 
 /**
  * Stateless Streamable HTTP handler. Each MCP request carries its own caller's
@@ -84,6 +100,10 @@ async function handleMcp(req: IncomingMessage, res: ServerResponse): Promise<voi
       .map((h) => h.trim())
       .filter(Boolean)
   });
+
+  // Apply hardening headers to the streamed/SSE response path too (this path
+  // bypasses sendJson). Safe to set before headers are flushed.
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
 
   res.on("close", () => {
     void transport.close();
