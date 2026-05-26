@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 export type JsonValue =
   | string
   | number
@@ -22,14 +24,29 @@ export class PotarixApiError extends Error {
   }
 }
 
+/**
+ * Per-request API key store. Under the stdio transport the key comes from the
+ * POTARIX_API_KEY env var (one key per process). Under the Streamable HTTP
+ * transport each inbound request carries its own caller's `ptk_live_` bearer
+ * token, so the HTTP server pins the key into this store for the duration of
+ * the request and the tool handlers transparently use it.
+ */
+const apiKeyStore = new AsyncLocalStorage<string>();
+
+export function runWithApiKey<T>(key: string, fn: () => T): T {
+  return apiKeyStore.run(key, fn);
+}
+
 function apiBase(): string {
   return process.env.POTARIX_API?.replace(/\/+$/, "") || DEFAULT_API_BASE;
 }
 
 function apiKey(): string {
-  const key = process.env.POTARIX_API_KEY;
+  const key = apiKeyStore.getStore() || process.env.POTARIX_API_KEY;
   if (!key) {
-    throw new PotarixApiError("Set POTARIX_API_KEY to call Potarix Enricher tools.");
+    throw new PotarixApiError(
+      "No Potarix API key available. Set POTARIX_API_KEY (stdio) or send an Authorization: Bearer ptk_live_... header (HTTP)."
+    );
   }
   return key;
 }

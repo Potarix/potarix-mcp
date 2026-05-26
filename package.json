@@ -15,7 +15,10 @@
   ],
   "scripts": {
     "build": "tsc",
+    "start": "node dist/index.js",
+    "start:http": "node dist/index.js --http",
     "smoke": "node scripts/smoke.mjs",
+    "smoke:http": "node scripts/smoke-http.mjs",
     "prepack": "npm run build"
   },
   "repository": {

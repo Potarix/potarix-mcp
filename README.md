@@ -20,7 +20,31 @@ MCP wrapper for Potarix Enricher. Lets AI agents resolve company websites, find 
 
 1 credit = $0.01. Trial accounts start with 25 free credits. Every endpoint floors at the worst-case provider COGS — a hit never loses money, and short-circuited waterfall calls earn margin.
 
-## Install
+## Two ways to connect
+
+| transport | endpoint | best for |
+|---|---|---|
+| Streamable HTTP (hosted) | `https://api.potarix.com/mcp` | remote agents (Claude, ChatGPT) — no install |
+| stdio (npm package) | `npx -y potarix-mcp` | local/desktop clients |
+
+Both expose the same nine tools. The hosted server is stateless and multi-tenant: every request is authorized by its own `Authorization: Bearer ptk_live_...` header, so there is no per-user deployment.
+
+### Hosted (Streamable HTTP)
+
+Point any MCP client that speaks Streamable HTTP at `https://api.potarix.com/mcp` and send your key as a bearer token:
+
+```jsonc
+{
+  "mcpServers": {
+    "potarix": {
+      "url": "https://api.potarix.com/mcp",
+      "headers": { "Authorization": "Bearer ptk_live_your_key" }
+    }
+  }
+}
+```
+
+### Install (stdio)
 
 ```bash
 npm install -g potarix-mcp
@@ -75,8 +99,24 @@ Then add `POTARIX_API_KEY` to the environment where Claude Code runs.
 ```bash
 npm install
 npm run build
-npm run smoke
+npm run smoke        # stdio transport: connect + tools/list
+
+# Streamable HTTP transport:
+npm run start:http   # serves on http://127.0.0.1:8080/mcp (set PORT to change)
+# in another shell:
+POTARIX_MCP_URL=http://127.0.0.1:8080/mcp npm run smoke:http
 ```
+
+Environment variables:
+
+| var | default | purpose |
+|---|---|---|
+| `POTARIX_API_KEY` | — | API key (stdio only; HTTP reads it per-request from the bearer header) |
+| `POTARIX_MCP_TRANSPORT` | `stdio` | `http` to run the Streamable HTTP server (or pass `--http`) |
+| `PORT` / `HOST` | `8080` / `127.0.0.1` | HTTP bind address |
+| `POTARIX_MCP_PATH` | `/mcp` | HTTP request path |
+| `POTARIX_MCP_ALLOWED_HOSTS` | — | comma-separated host allow-list; enables DNS-rebinding protection |
+| `POTARIX_API` | `https://api.potarix.com/enricher` | API base URL override |
 
 ## Registry Publishing
 

@@ -199,7 +199,9 @@ export function registerPotarixTools(server: McpServer): void {
       },
       annotations: {
         readOnlyHint: false,
-        destructiveHint: false,
+        // Charges the saved card off-session: an irreversible money-spend, so
+        // mark destructive per MCP annotation semantics (directory review reads this).
+        destructiveHint: true,
         idempotentHint: false,
         openWorldHint: true
       }

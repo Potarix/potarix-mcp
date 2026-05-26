@@ -1,0 +1,20 @@
+[Unit]
+Description=Potarix Enricher MCP server (Streamable HTTP transport)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/potarix-mcp
+# Streamable HTTP transport, bound to loopback; nginx terminates TLS and proxies /mcp here.
+# No API key in the environment: each MCP request carries its own caller's
+# `ptk_live_` bearer token, which the server extracts per-request.
+Environment=POTARIX_MCP_TRANSPORT=http
+Environment=HOST=127.0.0.1
+Environment=PORT=8011
+Environment=POTARIX_MCP_PATH=/mcp
+ExecStart=/usr/bin/node /root/potarix-mcp/dist/index.js --http
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
