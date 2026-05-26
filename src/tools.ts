@@ -1,6 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { registerAppTool } from "@modelcontextprotocol/ext-apps/server";
 import { z } from "zod";
 import { asJsonText, getPotarix, postPotarix } from "./potarix-api.js";
+import { FIND_ALL_CARD_URI, TOPUP_CARD_URI } from "./ui.js";
 
 const PAID_USAGE_NOTE = "Uses Potarix Enricher API credits.";
 
@@ -130,7 +132,8 @@ export function registerPotarixTools(server: McpServer): void {
       jsonContent(await postPotarix("/find-email/company", { domain }))
   );
 
-  server.registerTool(
+  registerAppTool(
+    server,
     "find_all",
     {
       title: "Find All Company Data",
@@ -156,7 +159,8 @@ export function registerPotarixTools(server: McpServer): void {
         destructiveHint: false,
         idempotentHint: true,
         openWorldHint: true
-      }
+      },
+      _meta: { ui: { resourceUri: FIND_ALL_CARD_URI } }
     },
     async ({ company_name, context, dm_categories, skip_company_emails }) =>
       jsonContent(
@@ -169,7 +173,8 @@ export function registerPotarixTools(server: McpServer): void {
       )
   );
 
-  server.registerTool(
+  registerAppTool(
+    server,
     "check_balance",
     {
       title: "Check Potarix Balance",
@@ -181,12 +186,14 @@ export function registerPotarixTools(server: McpServer): void {
         destructiveHint: false,
         idempotentHint: true,
         openWorldHint: false
-      }
+      },
+      _meta: { ui: { resourceUri: TOPUP_CARD_URI } }
     },
     async () => jsonContent(await getPotarix("/me"))
   );
 
-  server.registerTool(
+  registerAppTool(
+    server,
     "topup_credits",
     {
       title: "Top Up Potarix Credits",
@@ -204,7 +211,8 @@ export function registerPotarixTools(server: McpServer): void {
         destructiveHint: true,
         idempotentHint: false,
         openWorldHint: true
-      }
+      },
+      _meta: { ui: { resourceUri: TOPUP_CARD_URI } }
     },
     async ({ tier_key }) =>
       jsonContent(await postPotarix("/billing/topup", { tier_key }))
